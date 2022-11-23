@@ -1,0 +1,133 @@
+﻿@page "/"
+
+@inject IMatchService MatchService
+
+<!-- HEADER -->
+<div id="logo-header">
+    <img id="logo-img" src="/images/logo.png" alt="" style="height: 300px;">
+</div>
+
+<div id="header" style="height: 20rem" class="bg-primary">
+    <div id="header-background" style="height: 100%; width: 100%">
+        <div style="direction: rtl; font-size: 50px; margin-right: 100px" class="p-5">
+            <h1 style="font-weight: 800; font-size: 70px">
+                كأس
+            </h1>
+
+            <h1 style="font-weight: 800; font-size: 90px">
+                العالم
+            </h1>
+        </div>
+    </div>
+</div>
+<!-- HEADER -->
+<!-- HEADER BORDER -->
+<!-- <div id="header-border">
+
+</div> -->
+<!-- // HEADER BORDER // -->
+<!-- QATAR WORD -->
+<div class="d-flex justify-content-center" style="margin-top: 30px">
+    <img src="/images/qatar-word.png" alt="" style="width: 400px; margin: 0px auto">
+</div>
+<!--// QATAR WORD //-->
+<!-- HEADER IMAGE -->
+<!-- <div>
+    <img src="qatar.jpg" style="width: 100%" alt="">
+</div> -->
+
+<div class="container" style="margin-top: 50px">
+
+    <!-- GROUPS -->
+    <div class="p-5 mt-1">
+
+        <!-- TITLE ROW -->
+        <div class="row" style="direction: rtl;">
+            <h1>
+                <b>المجموعات</b>
+            </h1>
+            <hr>
+        </div>
+        <!--// TITLE ROW //-->
+        <!-- STANDINGS ROW -->
+        <div class="row" id="standings">
+            @if(standingsResponse is not null)
+            {
+                foreach (var item in standingsResponse.standings)
+                {
+                    <!-- GROUP COL -->
+                    <div class="col-md-6 mt-4">
+                        <div class="card shadow border-none">
+                            <div class="card-header bg-primary text-center">
+                                <b>@item.group.Replace('_', ' ')</b>
+                            </div>
+                            <div class="row m-0 bg-secondary text-center">
+                                <div class="col-lg-4">
+                                    Team
+                                </div>
+                                <div class="col-lg-2">
+                                    W
+                                </div>
+                                <div class="col-lg-2">
+                                    D
+                                </div>
+                                <div class="col-lg-2">
+                                    L
+                                </div>
+                                <div class="col-lg-2">
+                                    Pts
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                @foreach (var teamRow in item.table)
+                                {
+                                    <TableRow Row="teamRow" />
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <!--// GROUP COL //-->
+                }
+            }           
+        </div>
+    </div>
+    <!--// GROUPS //-->
+    <!-- MATCHES -->
+    <div id="matches " class="mt-5">
+        <div class="row" style="margin:0px">
+            <h1 style="direction: rtl;">
+                <b>مباريات اليوم</b>
+            </h1>
+            <hr>
+
+            <div class="row mb-5" id="matches">
+                @if(matchesResponse is not null)
+                {
+                    if (matchesResponse.matches.Any())
+                    {
+                        foreach (var match in matchesResponse.matches)
+                        {
+                            <MatchRow Match="match" />
+                        }
+                    }
+                    else
+                    {
+                        <h3 class="text-center text-danger">لا توجد مباريات في هذا اليوم</h3>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <!--// MATCHES //-->
+</div>
+
+@code{
+    private StandingsResponseDto? standingsResponse;
+    private MatchesResponseDto? matchesResponse;
+
+    protected override async Task OnInitializedAsync()
+    {
+        standingsResponse = await MatchService.GetStandings();
+        matchesResponse = await MatchService.GetTodayMatches();
+    }
+}
